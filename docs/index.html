@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="theme-color" content="#1E40AF">
+<title>河北三支一扶 · 时政备考</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --primary: #1E40AF; --primary-light: #3B82F6; --primary-dark: #1E3A8A;
+  --hebei-red: #DC2626; --accent: #F59E0B; --success: #10B981; --error: #EF4444;
+  --bg: #F1F5F9; --card: #FFFFFF; --text: #1E293B; --text-secondary: #64748B;
+  --border: #E2E8F0; --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --radius: 12px; --radius-sm: 8px;
+  --critical-bg: #FEF2F2; --critical-border: #FECACA; --critical-text: #991B1B;
+  --high-bg: #FFF7ED; --high-border: #FED7AA; --high-text: #9A3412;
+  --mid-bg: #EFF6FF; --mid-border: #BFDBFE; --mid-text: #1E40AF;
+  --low-bg: #F8FAFC; --low-border: #E2E8F0; --low-text: #64748B;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+[data-theme="dark"] {
+  --bg: #0F172A; --card: #1E293B; --text: #E2E8F0; --text-secondary: #94A3B8;
+  --border: #334155; --shadow: 0 2px 8px rgba(0,0,0,0.3);
+  --critical-bg: #450A0A; --critical-border: #7F1D1D; --critical-text: #FCA5A5;
+  --high-bg: #431407; --high-border: #7C2D12; --high-text: #FDBA74;
+  --mid-bg: #172554; --mid-border: #1E3A5F; --mid-text: #93C5FD;
+  --low-bg: #1E293B; --low-border: #334155; --low-text: #94A3B8;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; padding-bottom: calc(70px + var(--safe-bottom)); min-height: 100vh; }
+/* ===== App Bar ===== */
+.app-bar { background: var(--primary); color: #fff; padding: 12px 16px; position: sticky; top: 0; z-index: 100; display: flex; align-items: center; gap: 8px; }
+.app-bar h1 { font-size: 17px; font-weight: 600; flex: 1; }
+.app-bar .countdown { font-size: 12px; background: rgba(255,255,255,0.2); padding: 2px 10px; border-radius: 20px; }
+.app-bar .theme-btn { background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; padding: 4px; }
+/* ===== Daily Banner ===== */
+.daily-banner { background: var(--accent); color: #1C1917; text-align: center; padding: 6px 12px; font-size: 12px; font-weight: 500; display: none; }
+.daily-banner.show { display: block; }
+/* ===== Tab Bar ===== */
+.tab-bar { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: var(--card); border-top: 1px solid var(--border); display: flex; padding-bottom: var(--safe-bottom); }
+.tab-btn { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 6px 0 4px; font-size: 10px; color: var(--text-secondary); background: none; border: none; cursor: pointer; transition: color 0.2s; }
+.tab-btn .tab-icon { font-size: 20px; line-height: 1.2; }
+.tab-btn.active { color: var(--primary); font-weight: 600; }
+/* ===== Content ===== */
+.content { max-width: 800px; margin: 0 auto; padding: 12px 12px 12px; display: none; }
+.content.active { display: block; }
+/* ===== Filters ===== */
+.filter-bar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.filter-btn { padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border); background: var(--card); color: var(--text-secondary); font-size: 12px; cursor: pointer; white-space: nowrap; }
+.filter-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+.filter-btn.cat-ershida.active { background: #DC2626; border-color: #DC2626; }
+.filter-btn.cat-2024.active { background: #2563EB; border-color: #2563EB; }
+.filter-btn.cat-2025.active { background: #7C3AED; border-color: #7C3AED; }
+.filter-btn.cat-2026.active { background: #0891B2; border-color: #0891B2; }
+.filter-btn.cat-hebei.active { background: #DC2626; border-color: #DC2626; }
+/* ===== Knowledge Point Card ===== */
+.kp-card { background: var(--card); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow); border-left: 4px solid var(--border); transition: transform 0.15s; }
+.kp-card.critical { border-left-color: #DC2626; }
+.kp-card.high { border-left-color: #F59E0B; }
+.kp-card.medium { border-left-color: #3B82F6; }
+.kp-card.low { border-left-color: #94A3B8; }
+.kp-header { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
+.kp-cat { font-size: 11px; padding: 2px 8px; border-radius: 10px; white-space: nowrap; }
+.kp-title { font-size: 16px; font-weight: 600; flex: 1; line-height: 1.3; }
+.kp-badge { font-size: 10px; padding: 1px 8px; border-radius: 10px; font-weight: 600; white-space: nowrap; }
+.badge-critical { background: var(--critical-bg); color: var(--critical-text); border: 1px solid var(--critical-border); }
+.badge-high { background: var(--high-bg); color: var(--high-text); border: 1px solid var(--high-border); }
+.badge-medium { background: var(--mid-bg); color: var(--mid-text); border: 1px solid var(--mid-border); }
+.badge-low { background: var(--low-bg); color: var(--low-text); border: 1px solid var(--low-border); }
+.kp-body { font-size: 14px; line-height: 1.8; color: var(--text); }
+.kp-body .kp-highlight { background: #FEF3C7; color: #92400E; padding: 0 2px; border-radius: 3px; font-weight: 600; }
+[data-theme="dark"] .kp-body .kp-highlight { background: #78350F; color: #FDE68A; }
+.kp-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 8px; }
+.kp-tag { font-size: 11px; padding: 1px 8px; background: var(--bg); border-radius: 10px; color: var(--text-secondary); }
+.kp-related { margin-top: 8px; font-size: 12px; }
+.kp-related a { color: var(--primary); text-decoration: none; cursor: pointer; }
+/* ===== Quiz ===== */
+.quiz-setup { text-align: center; padding: 20px; }
+.quiz-setup h2 { font-size: 18px; margin-bottom: 16px; }
+.quiz-setup .setup-row { margin-bottom: 12px; }
+.quiz-setup select { padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--card); color: var(--text); font-size: 14px; }
+.quiz-start-btn { background: var(--primary); color: #fff; border: none; padding: 12px 32px; border-radius: var(--radius); font-size: 16px; font-weight: 600; cursor: pointer; }
+.quiz-card { background: var(--card); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+.quiz-progress { font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; display: flex; justify-content: space-between; }
+.quiz-type-badge { font-size: 11px; padding: 2px 10px; border-radius: 10px; background: var(--primary); color: #fff; }
+.quiz-question { font-size: 16px; font-weight: 500; margin-bottom: 16px; line-height: 1.6; }
+.quiz-option { display: block; width: 100%; text-align: left; padding: 12px 16px; margin-bottom: 8px; background: var(--bg); border: 2px solid var(--border); border-radius: var(--radius-sm); font-size: 14px; cursor: pointer; transition: all 0.15s; color: var(--text); }
+.quiz-option:active { transform: scale(0.98); }
+.quiz-option.selected { border-color: var(--primary); background: rgba(30,64,175,0.08); }
+.quiz-option.correct { border-color: var(--success); background: rgba(16,185,129,0.1); color: #065F46; }
+[data-theme="dark"] .quiz-option.correct { color: #6EE7B7; }
+.quiz-option.wrong { border-color: var(--error); background: rgba(239,68,68,0.1); color: #991B1B; }
+[data-theme="dark"] .quiz-option.wrong { color: #FCA5A5; }
+.quiz-option.show-correct { border-color: var(--success); }
+.quiz-option.disabled { pointer-events: none; }
+.quiz-explanation { margin-top: 12px; padding: 12px; background: var(--bg); border-radius: var(--radius-sm); font-size: 13px; line-height: 1.6; }
+.quiz-explanation strong { color: var(--primary); }
+.quiz-nav { display: flex; gap: 8px; margin-top: 16px; }
+.quiz-nav button { flex: 1; padding: 10px; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 500; cursor: pointer; }
+.quiz-prev { background: var(--bg); color: var(--text); }
+.quiz-next { background: var(--primary); color: #fff; }
+.quiz-result { background: var(--card); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); text-align: center; }
+.quiz-result .score { font-size: 48px; font-weight: 700; color: var(--primary); }
+.quiz-result .score-label { font-size: 14px; color: var(--text-secondary); }
+.quiz-detail { margin-top: 16px; text-align: left; }
+.quiz-detail-item { padding: 12px; border-bottom: 1px solid var(--border); font-size: 13px; }
+.quiz-detail-item .q-status { display: inline-block; width: 20px; height: 20px; border-radius: 50%; text-align: center; line-height: 20px; font-size: 11px; margin-right: 8px; }
+.quiz-detail-item .q-status.c { background: var(--success); color: #fff; }
+.quiz-detail-item .q-status.w { background: var(--error); color: #fff; }
+/* ===== Flashcard ===== */
+.flashcard-container { perspective: 1000px; margin: 20px auto; max-width: 400px; }
+.flashcard { width: 100%; min-height: 260px; position: relative; cursor: pointer; transition: transform 0.5s; transform-style: preserve-3d; }
+.flashcard.flipped { transform: rotateY(180deg); }
+.flashcard-face { position: absolute; width: 100%; min-height: 260px; backface-visibility: hidden; border-radius: var(--radius); padding: 24px 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; box-shadow: var(--shadow); }
+.flashcard-front { background: var(--card); z-index: 2; }
+.flashcard-back { background: var(--primary); color: #fff; transform: rotateY(180deg); }
+.flashcard-back .fc-hint { font-size: 13px; opacity: 0.8; margin-bottom: 12px; }
+.flashcard-back .fc-content { font-size: 15px; line-height: 1.7; }
+.flashcard-count { text-align: center; font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; }
+.flashcard-category { text-align: center; font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
+.fc-rating { display: flex; gap: 8px; margin-top: 16px; justify-content: center; }
+.fc-rating button { width: 56px; height: 56px; border-radius: 50%; border: 2px solid var(--border); font-size: 11px; font-weight: 600; cursor: pointer; background: var(--card); color: var(--text); transition: all 0.15s; }
+.fc-rating button:active { transform: scale(0.9); }
+.fc-rating .r1 { border-color: #EF4444; color: #EF4444; } .fc-rating .r2 { border-color: #F59E0B; color: #F59E0B; }
+.fc-rating .r3 { border-color: #3B82F6; color: #3B82F6; } .fc-rating .r4 { border-color: #10B981; color: #10B981; }
+.fc-nav { display: flex; gap: 8px; margin-top: 12px; justify-content: center; }
+.fc-nav button { padding: 8px 24px; border: none; border-radius: var(--radius-sm); font-size: 14px; cursor: pointer; }
+.fc-prev { background: var(--bg); color: var(--text); } .fc-next { background: var(--primary); color: #fff; }
+/* ===== Stats ===== */
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.stat-card { background: var(--card); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); text-align: center; }
+.stat-num { font-size: 28px; font-weight: 700; color: var(--primary); }
+.stat-label { font-size: 12px; color: var(--text-secondary); }
+.stat-card.green .stat-num { color: var(--success); }
+.stat-card.red .stat-num { color: var(--error); }
+.stat-card.amber .stat-num { color: var(--accent); }
+.section-title { font-size: 16px; font-weight: 600; margin: 16px 0 8px; }
+.weak-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: var(--card); border-radius: var(--radius-sm); margin-bottom: 6px; font-size: 13px; }
+.weak-bar { height: 6px; border-radius: 3px; background: var(--border); margin-top: 4px; }
+.weak-bar-fill { height: 100%; border-radius: 3px; transition: width 0.5s; }
+.search-box { width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 14px; background: var(--card); color: var(--text); margin-bottom: 12px; }
+.search-result { padding: 10px 12px; background: var(--card); border-radius: var(--radius-sm); margin-bottom: 6px; cursor: pointer; font-size: 13px; }
+.search-result:hover { background: var(--bg); }
+.plan-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.plan-table td { padding: 8px 6px; border-bottom: 1px solid var(--border); }
+.plan-table td:first-child { font-weight: 600; color: var(--primary); width: 40px; }
+.data-mgmt { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.data-mgmt button { padding: 8px 16px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--card); color: var(--text); font-size: 12px; cursor: pointer; }
+.data-mgmt .danger { color: var(--error); border-color: var(--error); }
+/* ===== Empty state ===== */
+.empty-state { text-align: center; padding: 40px 20px; color: var(--text-secondary); font-size: 14px; }
+.empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
+/* ===== Touch ===== */
+.swipe-area { touch-action: pan-y; }
+/* ===== Responsive ===== */
+@media (min-width: 768px) {
+  .content { padding: 20px 24px 24px; }
+  .stats-grid { grid-template-columns: 1fr 1fr 1fr 1fr; }
+}
+/* ===== Toast ===== */
+.toast { position: fixed; top: 60px; left: 50%; transform: translateX(-50%); z-index: 999; background: var(--text); color: var(--bg); padding: 10px 20px; border-radius: var(--radius-sm); font-size: 13px; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+.toast.show { opacity: 1; }
+/* ===== Loading ===== */
+.loading { text-align: center; padding: 60px 20px; }
+.loading .spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div class="app-bar">
+  <h1>📖 时政备考</h1>
+  <span class="countdown" id="countdown">距考试 -- 天</span>
+  <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">🌙</button>
+</div>
+
+<div class="daily-banner" id="dailyBanner"></div>
+
+<div id="appContent">
+  <div class="loading" id="loadingView">
+    <div class="spinner"></div>
+    <div>加载时政数据中...</div>
+  </div>
+</div>
+
+<div class="tab-bar" id="tabBar" style="display:none">
+  <button class="tab-btn active" data-tab="study" onclick="switchTab('study')"><span class="tab-icon">📖</span>学习</button>
+  <button class="tab-btn" data-tab="quiz" onclick="switchTab('quiz')"><span class="tab-icon">✍️</span>刷题</button>
+  <button class="tab-btn" data-tab="flashcard" onclick="switchTab('flashcard')"><span class="tab-icon">🃏</span>闪卡</button>
+  <button class="tab-btn" data-tab="stats" onclick="switchTab('stats')"><span class="tab-icon">📊</span>统计</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== CONFIG =====
+const CFG = {
+  examDate: new Date('2026-07-30'),
+  storagePrefix: 'szyf_sz_',
+  dataUrl: 'data.json',
+  version: '1.0',
+}
+const DAYS_LEFT = Math.max(0, Math.ceil((CFG.examDate - new Date()) / (1000*60*60*24)))
+
+// ===== STORE =====
+const Store = {
+  get(k, def) { try { const v = localStorage.getItem(CFG.storagePrefix + k); return v ? JSON.parse(v) : def } catch { return def } },
+  set(k, v) { try { localStorage.setItem(CFG.storagePrefix + k, JSON.stringify(v)) } catch {} },
+  remove(k) { localStorage.removeItem(CFG.storagePrefix + k) },
+}
+
+// ===== STATE =====
+const state = {
+  data: null,
+  page: 'study',
+  filters: { category: 'all', importance: 'all' },
+  quiz: { questions: [], current: 0, answers: [], results: [], done: false, mode: 'all', cat: 'all', count: 10 },
+  fc: { cards: [], current: 0, flipped: false },
+  progress: Store.get('progress', { learned: {}, quizResults: {}, fcRatings: {}, streak: 0, lastDate: null, totalKps: 0, totalQs: 0, correctQs: 0 }),
+  theme: Store.get('theme', 'light'),
+}
+
+// ===== DATA LOADING =====
+async function loadData() {
+  try {
+    const resp = await fetch(CFG.dataUrl + '?t=' + Date.now())
+    if (!resp.ok) throw new Error('HTTP ' + resp.status)
+    state.data = await resp.json()
+    return true
+  } catch (e) {
+    console.error('数据加载失败:', e)
+    return false
+  }
+}
+
+async function init() {
+  const loaded = await loadData()
+  if (!loaded) {
+    document.getElementById('loadingView').innerHTML = '<div class="empty-state"><div class="empty-icon">😵</div>数据加载失败，请检查网络后刷新页面</div>'
+    return
+  }
+  document.getElementById('loadingView').style.display = 'none'
+  document.getElementById('tabBar').style.display = 'flex'
+
+  // Countdown
+  document.getElementById('countdown').textContent = DAYS_LEFT > 0 ? `⏳ ${DAYS_LEFT}天` : '📌 考试日'
+
+  // Daily banner
+  if (state.data.dailyUpdate) {
+    const banner = document.getElementById('dailyBanner')
+    banner.textContent = `🔄 ${state.data.dailyUpdate.date} 更新：${state.data.dailyUpdate.newKps || 0}个知识点，${state.data.dailyUpdate.newQuestions || 0}道题`
+    banner.classList.add('show')
+  }
+
+  // Theme
+  applyTheme(state.theme)
+
+  // Render default tab
+  switchTab('study')
+}
+
+// ===== THEME =====
+function toggleTheme() {
+  state.theme = state.theme === 'light' ? 'dark' : 'light'
+  Store.set('theme', state.theme)
+  applyTheme(state.theme)
+}
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme', t)
+  document.getElementById('themeBtn').textContent = t === 'light' ? '🌙' : '☀️'
+}
+
+// ===== TAB SWITCHING =====
+function switchTab(tab) {
+  state.page = tab
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab))
+  const container = document.getElementById('appContent')
+  switch (tab) {
+    case 'study': renderStudy(container); break
+    case 'quiz': renderQuizSetup(container); break
+    case 'flashcard': renderFlashcardSetup(container); break
+    case 'stats': renderStats(container); break
+  }
+  window.scrollTo(0, 0)
+}
+
+// ===== TOAST =====
+function showToast(msg, duration = 2000) {
+  const t = document.getElementById('toast')
+  t.textContent = msg; t.classList.add('show')
+  clearTimeout(t._timer); t._timer = setTimeout(() => t.classList.remove('show'), duration)
+}
+
+// ===== CATEGORY HELPERS =====
+function getCategory(id) {
+  if (!state.data) return null
+  return state.data.categories.find(c => c.id === id)
+}
+function getCatName(id) {
+  const c = getCategory(id)
+  return c ? c.name : id
+}
+function getCatColor(id) {
+  const c = getCategory(id)
+  return c ? c.color : '#64748B'
+}
+function importanceLabel(imp) {
+  return { critical: '必考', high: '高频', medium: '中频', low: '了解' }[imp] || imp
+}
+function importanceBadge(imp) {
+  const map = { critical: 'badge-critical', high: 'badge-high', medium: 'badge-medium', low: 'badge-low' }
+  return map[imp] || 'badge-low'
+}
+
+// ===== RENDER: STUDY =====
+function renderStudy(container) {
+  if (!state.data) return
+  const kps = state.data.knowledgePoints || []
+  const cats = state.data.categories || []
+
+  // Build HTML
+  let html = '<div class="content active" id="tab-study">'
+
+  // Category filter bar
+  html += '<div class="filter-bar">'
+  html += `<button class="filter-btn ${state.filters.category === 'all' ? 'active' : ''}" onclick="setStudyFilter('category','all')">全部</button>`
+  cats.forEach(c => {
+    html += `<button class="filter-btn cat-${c.id} ${state.filters.category === c.id ? 'active' : ''}" onclick="setStudyFilter('category','${c.id}')">${c.icon || ''} ${c.name.replace(/^.{1,2}\s/, '')}</button>`
+  })
+  html += '</div>'
+
+  // Importance filter
+  html += '<div class="filter-bar" style="margin-bottom:12px">'
+  html += `<button class="filter-btn ${state.filters.importance === 'all' ? 'active' : ''}" onclick="setStudyFilter('importance','all')">全部</button>`
+  html += `<button class="filter-btn ${state.filters.importance === 'critical' ? 'active' : ''}" onclick="setStudyFilter('importance','critical')">🔴 必考</button>`
+  html += `<button class="filter-btn ${state.filters.importance === 'high' ? 'active' : ''}" onclick="setStudyFilter('importance','high')">🟠 高频</button>`
+  html += `<button class="filter-btn ${state.filters.importance === 'medium' ? 'active' : ''}" onclick="setStudyFilter('importance','medium')">🔵 中频</button>`
+  html += '</div>'
+
+  // Filtered KPs
+  let filtered = [...kps]
+  if (state.filters.category !== 'all') filtered = filtered.filter(kp => kp.category === state.filters.category)
+  if (state.filters.importance !== 'all') filtered = filtered.filter(kp => kp.importance === state.filters.importance)
+
+  if (filtered.length === 0) {
+    html += '<div class="empty-state"><div class="empty-icon">📭</div>该分类暂无内容</div>'
+  } else {
+    filtered.forEach(kp => {
+      const cat = getCategory(kp.category)
+      const catName = cat ? cat.name : kp.category
+      const catColor = cat ? cat.color : '#64748B'
+      const learned = state.progress.learned[kp.id]
+      html += `<div class="kp-card ${kp.importance || ''}">`
+      html += `<div class="kp-header">`
+      html += `<span class="kp-cat" style="background:${catColor}20;color:${catColor}">${catName}</span>`
+      html += `<div class="kp-title">${kp.title}</div>`
+      html += `<span class="kp-badge ${importanceBadge(kp.importance)}">${importanceLabel(kp.importance)}</span>`
+      if (learned) html += `<span style="color:var(--success);font-size:14px">✓</span>`
+      html += `</div>`
+      html += `<div class="kp-body">${renderHighlights(kp.content, kp.highlights)}</div>`
+      if (kp.tags && kp.tags.length) {
+        html += `<div class="kp-tags">${kp.tags.map(t => `<span class="kp-tag">${t}</span>`).join('')}</div>`
+      }
+      // Related questions count
+      const relatedQs = state.data.questions.filter(q => q.relatedKpId === kp.id)
+      if (relatedQs.length > 0) {
+        html += `<div class="kp-related"><a onclick="switchTab('quiz');setTimeout(()=>startQuizWithKp('${kp.id}'),100)">🎯 关联练习 (${relatedQs.length}题) →</a></div>`
+      }
+      // Mark learned button
+      html += `<div style="margin-top:8px"><button class="filter-btn" onclick="toggleLearned('${kp.id}')" style="font-size:11px">${learned ? '✅ 已掌握' : '☐ 标记掌握'}</button></div>`
+      html += `</div>`
+    })
+  }
+
+  html += '</div>'
+  container.innerHTML = html
+  container.querySelector('.content').classList.add('active')
+}
+
+function setStudyFilter(type, value) {
+  if (type === 'category') state.filters.category = value
+  else state.filters.importance = value
+  const container = document.getElementById('appContent')
+  renderStudy(container)
+}
+
+function toggleLearned(kpId) {
+  if (state.progress.learned[kpId]) delete state.progress.learned[kpId]
+  else state.progress.learned[kpId] = { date: new Date().toISOString().slice(0,10), mastered: true }
+  state.progress.totalKps = Object.keys(state.progress.learned).length
+  Store.set('progress', state.progress)
+  const container = document.getElementById('appContent')
+  renderStudy(container)
+  showToast(state.progress.learned[kpId] ? '✅ 已标记掌握' : '已取消标记')
+}
+
+function startQuizWithKp(kpId) {
+  const related = state.data.questions.filter(q => q.relatedKpId === kpId)
+  if (related.length === 0) { showToast('暂无关联题目'); return }
+  startQuiz(related, 'all', related.length)
+}
+
+// ===== RENDER HIGHLIGHTS =====
+function renderHighlights(content, highlights) {
+  if (!highlights || !highlights.length) return escapeHtml(content)
+  let result = escapeHtml(content)
+  // Sort by start position descending to avoid offset issues
+  const sorted = [...highlights].sort((a, b) => b.start - a.start)
+  for (const h of sorted) {
+    const before = result.slice(0, h.start)
+    const highlighted = result.slice(h.start, h.end)
+    const after = result.slice(h.end)
+    result = before + '<mark class="kp-highlight">' + highlighted + '</mark>' + after
+  }
+  return result
+}
+
+function escapeHtml(s) {
+  const d = document.createElement('div')
+  d.textContent = s
+  return d.innerHTML
+}
+
+// ===== RENDER: QUIZ SETUP =====
+function renderQuizSetup(container) {
+  if (!state.data) return
+  let html = '<div class="content active" id="tab-quiz">'
+  html += '<div class="quiz-setup">'
+  html += '<h2>✍️ 时政刷题</h2>'
+  html += '<div class="setup-row">'
+  html += '<select id="quizCat">'
+  html += '<option value="all">全部分类</option>'
+  state.data.categories.forEach(c => html += `<option value="${c.id}">${c.name}</option>`)
+  html += '</select>'
+  html += '</div>'
+  html += '<div class="setup-row">'
+  html += '<select id="quizType">'
+  html += '<option value="all">全部题型</option><option value="single">单选题</option><option value="multiple">多选题</option><option value="judge">判断题</option>'
+  html += '</select>'
+  html += '</div>'
+  html += '<div class="setup-row">'
+  html += '<select id="quizCount">'
+  html += '<option value="10">10题</option><option value="20">20题</option><option value="30">30题</option><option value="0">全部题目</option>'
+  html += '</select>'
+  html += '</div>'
+  html += '<div class="setup-row"><label><input type="checkbox" id="quizWrongOnly"> 仅错题重练</label></div>'
+  html += '<button class="quiz-start-btn" onclick="startQuizFromSetup()">开始答题</button>'
+  html += '</div></div>'
+  container.innerHTML = html
+  container.querySelector('.content').classList.add('active')
+}
+
+function startQuizFromSetup() {
+  const cat = document.getElementById('quizCat').value
+  const type = document.getElementById('quizType').value
+  const count = parseInt(document.getElementById('quizCount').value) || 0
+  const wrongOnly = document.getElementById('quizWrongOnly').checked
+  let qs = [...state.data.questions]
+  if (cat !== 'all') qs = qs.filter(q => q.category === cat)
+  if (type !== 'all') qs = qs.filter(q => q.type === type)
+  if (wrongOnly) {
+    const wrongIds = Object.entries(state.progress.quizResults).filter(([id, r]) => !r).map(([id]) => id)
+    qs = qs.filter(q => wrongIds.includes(q.id))
+  }
+  if (qs.length === 0) { showToast('没有符合条件的题目'); return }
+  if (count > 0 && qs.length > count) qs = shuffleArray(qs).slice(0, count)
+  startQuiz(qs, cat, count)
+}
+
+function startQuiz(questions, cat, count) {
+  state.quiz.questions = questions
+  state.quiz.current = 0
+  state.quiz.answers = new Array(questions.length).fill(null)
+  state.quiz.results = new Array(questions.length).fill(null)
+  state.quiz.done = false
+  state.quiz.mode = cat
+  state.quiz.cat = cat
+  state.quiz.count = count
+  const container = document.getElementById('appContent')
+  renderQuizActive(container)
+}
+
+function renderQuizActive(container) {
+  if (state.quiz.done) { renderQuizResult(container); return }
+  const q = state.quiz.questions[state.quiz.current]
+  if (!q) { renderQuizResult(container); return }
+
+  let html = '<div class="content active" id="tab-quiz"><div class="quiz-card">'
+
+  // Progress
+  html += `<div class="quiz-progress"><span>${state.quiz.current + 1} / ${state.quiz.questions.length}</span>`
+  html += `<span class="quiz-type-badge">${typeLabel(q.type)}</span></div>`
+
+  // Question
+  html += `<div class="quiz-question">${escapeHtml(q.question)}</div>`
+
+  // Options
+  const answered = state.quiz.answers[state.quiz.current] !== null
+  const selected = state.quiz.answers[state.quiz.current] || []
+  const isCorrect = state.quiz.results[state.quiz.current]
+
+  q.options.forEach((opt, i) => {
+    let cls = 'quiz-option'
+    if (answered) cls += ' disabled'
+    if (selected.includes(i)) cls += ' selected'
+    if (answered) {
+      if (q.correct.includes(i)) cls += ' correct show-correct'
+      if (selected.includes(i) && !q.correct.includes(i)) cls += ' wrong'
+    }
+    html += `<button class="${cls}" onclick="selectQuizOption(${i})" ${answered ? 'disabled' : ''}>${escapeHtml(opt)}</button>`
+  })
+
+  // Submit button
+  if (!answered) {
+    html += `<div style="margin-top:12px"><button class="quiz-start-btn" onclick="submitQuizAnswer()" style="padding:10px 24px;font-size:14px">${q.type === 'multiple' ? '提交答案' : '确认选择'}</button></div>`
+  }
+
+  // Explanation
+  if (answered && isCorrect !== null) {
+    html += `<div class="quiz-explanation">${isCorrect ? '✅ <strong>正确！</strong>' : '❌ <strong>错误！</strong>'} ${renderHighlightStr(q.explanation, q.highlights)}`
+    if (q.source) html += `<br><span style="font-size:11px;color:var(--text-secondary)">📖 来源：${escapeHtml(q.source)}</span>`
+    html += '</div>'
+  }
+
+  // Nav
+  html += '<div class="quiz-nav">'
+  if (state.quiz.current > 0) html += `<button class="quiz-prev" onclick="quizPrev()">◀ 上一题</button>`
+  else html += `<button class="quiz-prev" style="opacity:0.3" disabled>◀ 上一题</button>`
+  if (state.quiz.current < state.quiz.questions.length - 1) html += `<button class="quiz-next" onclick="quizNext()">下一题 ▶</button>`
+  else html += `<button class="quiz-next" onclick="finishQuiz()">查看结果</button>`
+  html += '</div>'
+
+  html += '</div></div>'
+  container.innerHTML = html
+  container.querySelector('.content').classList.add('active')
+}
+
+function typeLabel(t) {
+  return { single: '单选题', multiple: '多选题', judge: '判断题' }[t] || t
+}
+
+function selectQuizOption(idx) {
+  const q = state.quiz.questions[state.quiz.current]
+  if (!q) return
+  let selected = state.quiz.answers[state.quiz.current] || []
+  if (q.type === 'single' || q.type === 'judge') {
+    selected = [idx]
+  } else {
+    const i = selected.indexOf(idx)
+    i >= 0 ? selected.splice(i, 1) : selected.push(idx)
+  }
+  state.quiz.answers[state.quiz.current] = selected
+  renderQuizActive(document.getElementById('appContent'))
+}
+
+function submitQuizAnswer() {
+  const q = state.quiz.questions[state.quiz.current]
+  const selected = state.quiz.answers[state.quiz.current] || []
+  if (selected.length === 0) { showToast('请先选择一个答案'); return }
+  if (q.type === 'multiple' && selected.length < 2) { showToast('多选题请选择至少两个选项'); return }
+
+  const correct = arraysEqual(selected.sort(), [...q.correct].sort())
+  state.quiz.results[state.quiz.current] = correct
+
+  // Save progress
+  state.progress.quizResults[q.id] = correct
+  state.progress.totalQs++
+  if (correct) state.progress.correctQs++
+  Store.set('progress', state.progress)
+
+  renderQuizActive(document.getElementById('appContent'))
+}
+
+function quizNext() {
+  if (state.quiz.current < state.quiz.questions.length - 1) {
+    state.quiz.current++
+    renderQuizActive(document.getElementById('appContent'))
+  }
+}
+function quizPrev() {
+  if (state.quiz.current > 0) {
+    state.quiz.current--
+    renderQuizActive(document.getElementById('appContent'))
+  }
+}
+
+function finishQuiz() {
+  state.quiz.done = true
+  renderQuizActive(document.getElementById('appContent'))
+}
+
+function renderQuizResult(container) {
+  const total = state.quiz.questions.length
+  const correct = state.quiz.results.filter(r => r === true).length
+  const wrong = state.quiz.results.filter(r => r === false).length
+  const unanswered = state.quiz.results.filter(r => r === null).length
+  const pct = total > 0 ? Math.round(correct / total * 100) : 0
+
+  let html = '<div class="content active" id="tab-quiz"><div class="quiz-result">'
+  html += `<div class="score">${pct}%</div>`
+  html += `<div class="score-label">${correct} / ${total} 正确 (未答${unanswered})</div>`
+  html += `<div style="margin:12px 0;font-size:13px;color:var(--text-secondary)">`
+  html += `<span style="color:var(--success)">✅ ${correct}</span> · <span style="color:var(--error)">❌ ${wrong}</span> · <span style="color:var(--text-secondary)">⬜ ${unanswered}</span>`
+  html += `</div>`
+
+  html += '<div class="quiz-detail">'
+  state.quiz.questions.forEach((q, i) => {
+    const r = state.quiz.results[i]
+    html += `<div class="quiz-detail-item">`
+    if (r === true) html += `<span class="q-status c">✓</span>`
+    else if (r === false) html += `<span class="q-status w">✗</span>`
+    else html += `<span class="q-status" style="background:var(--border);color:var(--text-secondary)">—</span>`
+    html += `${escapeHtml(q.question.slice(0, 40))}…`
+    html += `</div>`
+  })
+  html += '</div>'
+
+  html += '<div style="margin-top:16px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">'
+  html += `<button class="quiz-start-btn" onclick="startQuizFromSetup()" style="padding:10px 20px;font-size:13px">🔄 再来一轮</button>`
+  html += `<button class="filter-btn" onclick="switchTab('study')" style="padding:10px 20px;font-size:13px">📖 去学习</button>`
+  html += '</div>'
+
+  html += '</div></div>'
+  container.innerHTML = html
+  container.querySelector('.content').classList.add('active')
+}
+
+// ===== RENDER: FLASHCARD SETUP =====
+function renderFlashcardSetup(container) {
+  if (!state.data) return
+  let html = '<div class="content active" id="tab-flashcard"><div class="quiz-setup">'
+  html += '<h2>🃏 闪卡记忆</h2>'
+  html += '<div class="setup-row"><select id="fcCat">'
+  html += '<option value="all">全部分类</option>'
+  state.data.categories.forEach(c => html += `<option value="${c.id}">${c.name}</option>`)
+  html += '</select></div>'
+  html += '<div class="setup-row"><select id="fcPriority">'
+  html += '<option value="critical">必考优先</option><option value="high">高频优先</option><option value="mixed">随机顺序</option>'
+  html += '</select></div>'
+  html += `<div class="setup-row"><label><input type="checkbox" id="fcUnlearnedOnly"> 仅未掌握</label></div>`
+  html += `<button class="quiz-start-btn" onclick="startFlashcards()">开始记忆</button>`
+  html += '</div></div>'
+  container.innerHTML = html
+  container.querySelector('.content').classList.add('active')
+}
+
+function startFlashcards() {
+  const cat = document.getElementById('fcCat').value
+  const priority = document.getElementById('fcPriority').value
+  const unlearnedOnly = document.getElementById('fcUnlearnedOnly').checked
+
+  let items = []
+  state.data.knowledgePoints.forEach(kp => {
+    if (cat !== 'all' && kp.category !== cat) return
+    if (unlearnedOnly && state.progress.learned[kp.id]) return
+    items.push({
+      id: kp.id,
+      front: kp.title,
+      back: kp.content,
+      importance: kp.importance,
+      category: kp.category,
+      type: 'kp',
+      highlights: kp.highlights,
+    })
+  })
+
+  if (items.length === 0) { showToast('没有符合条件的闪卡'); return }
+
+  // Sort by importance
+  const order = { critical: 0, high: 1, medium: 2, low: 3 }
+  if (priority === 'critical') items.sort((a, b) => (order[a.importance] || 99) - (order[b.importance] || 99))
+  else if (priority === 'high') items.sort((a, b) => (order[a.importance] || 99) - (order[b.importance] || 99))
+  if (priority === 'mixed') items = shuffleArray(items)
+
+  state.fc.cards = items
+  state.fc.current = 0
+  state.fc.flipped = false
+
+  const container = document.getElementById('appContent')
+  renderFlashcardActive(container)
+}
+
+function renderFlashcardActive(container) {
+  const cards = state.fc.cards
+  if (cards.length === 0) { renderFlashcardSetup(container); return }
+
+  const idx = state.fc.current
+  const card = cards[idx]
+  if (!card) { renderFlashcardSetup(container); return }
+
+  let html = '<div class="content active" id="tab-flashcard">'
+  html += `<div class="flashcard-category">${getCatName(card.category)} · ${importanceLabel(card.importance)}</div>`
+  html += `<div class="flashcard-count">${idx + 1} / ${cards.length}</div>`
+  html += '<div class="flashcard-container">'
+  html += `<div class="flashcard ${state.fc.flipped ? 'flipped' : ''}" onclick="${state.fc.flipped ? '' : 'flipCard()'}">`
+  html += `<div class="flashcard-face flashcard-front"><div style="font-size:18px;font-weight:600">${escapeHtml(card.front)}</div>`
+  html += '<div style="margin-top:12px;font-size:13px;color:var(--text-secondary)">👆 点击翻转</div></div>'
+  html += `<div class="flashcard-face flashcard-back"><div class="fc-hint">📝 ${escapeHtml(card.front)}</div>`
+  html += `<div class="fc-content">${card.type === 'kp' ? renderHighlights(card.back, card.highlights) : escapeHtml(card.back)}</div>`
+  html += '</div></div></div>'
+
+  if (state.fc.flipped) {
+    html += '<div class="fc-rating">'
+    html += '<button class="r1" onclick="rateFlashcard(1)">😵忘了</button>'
+    html += '<button class="r2" onclick="rateFlashcard(2)">🤔困难</button>'
+    html += '<button class="r3" onclick="rateFlashcard(3)">😊一般</button>'
+    html += '<button class="r4" onclick="rateFlashcard(4)">✅熟了</button>'
+    html += '</div>'
+  }
+
+  html += '<div class="fc-nav">'
+  if (idx > 0) html += `<button class="fc-prev" onclick="fcPrev()">◀ 上一张</button>`
+  else html += `<button class="fc-prev" style="opacity:0.3" disabled>◀ 上一张</button>`
+  if (idx < cards.length - 1) html += `<button class="fc-next" onclick="fcNext()">下一张 ▶</button>`
+  else html += `<button class="fc-next" onclick="switchTab('stats')">查看统计 📊</button>`
+  html += '</div>'
+
+  html += '</div>'
+  container.innerHTML = html
+  container.querySelector('.content').classList.add('active')
+}
+
+function flipCard() {
+  if (!state.fc.flipped) {
+    state.fc.flipped = true
+    renderFlashcardActive(document.getElementById('appContent'))
+  }
+}
+
+function rateFlashcard(rating) {
+  const card = state.fc.cards[state.fc.current]
+  state.progress.fcRatings[card.id] = { rating, date: new Date().toISOString().slice(0,10) }
+  Store.set('progress', state.progress)
+
+  // Auto-advance
+  if (state.fc.current < state.fc.cards.length - 1) {
+    state.fc.current++
+    state.fc.flipped = false
+  } else {
+    showToast('🎉 全部完成！')
+  }
+  renderFlashcardActive(document.getElementById('appContent'))
+}
+
+function fcPrev() {
+  if (state.fc.current > 0) {
+    state.fc.current--
+    state.fc.flipped = false
+    renderFlashcardActive(document.getElementById('appContent'))
+  }
+}
+function fcNext() {
+  if (state.fc.current < state.fc.cards.length - 1) {
+    state.fc.current++
+    state.fc.flipped = false
+    renderFlashcardActive(document.getElementById('appContent'))
+  }
+}
+
+// ===== RENDER: STATS =====
+function renderStats(container) {
+  if (!state.data) return
+  const kps = state.data.knowledgePoints || []
+  const qs = state.data.questions || []
+  const p = state.progress
+  const totalKps = kps.length
+  const learnedKps = Object.keys(p.learned).length
+  const pctKps = totalKps > 0 ? Math.round(learnedKps / totalKps * 100) : 0
+  const totalQs = p.totalQs
+  const correctQs = p.correctQs
+  const accuracy = totalQs > 0 ? Math.round(correctQs / totalQs * 100) : 0
+
+  let html = '<div class="content active" id="tab-stats">'
+
+  // Stats grid
+  html += '<div class="stats-grid">'
+  html += `<div class="stat-card"><div class="stat-num">${pctKps}%</div><div class="stat-label">已学知识点</div><div style="font-size:11px;color:var(--text-secondary)">${learnedKps}/${totalKps}</div></div>`
+  html += `<div class="stat-card green"><div class="stat-num">${accuracy}%</div><div class="stat-label">答题正确率</div><div style="font-size:11px;color:var(--text-secondary)">${correctQs}/${totalQs}</div></div>`
+  html += `<div class="stat-card amber"><div class="stat-num">${DAYS_LEFT}</div><div class="stat-label">距考试（天）</div></div>`
+  html += `<div class="stat-card red"><div class="stat-num">${totalKps}</div><div class="stat-label">总知识点</div><div style="font-size:11px;color:var(--text-secondary)">${qs.length}道题</div></div>`
+  html += '</div>'
+
+  // Daily update info
+  if (state.data.dailyUpdate) {
+    html += `<div style="background:var(--card);border-radius:var(--radius);padding:12px 16px;margin-bottom:12px;font-size:12px;color:var(--text-secondary)">`
+    html += `🔄 上次更新：${state.data.dailyUpdate.date}（${state.data.dailyUpdate.summary || ''}）`
+    html += '</div>'
+  }
+
+  // Weak areas
+  html += '<div class="section-title">📉 薄弱分析</div>'
+  const cats = state.data.categories || []
+  const weakData = cats.map(cat => {
+    const catQs = qs.filter(q => q.category === cat.id)
+    const answered = catQs.filter(q => p.quizResults[q.id] !== undefined)
+    const correct = answered.filter(q => p.quizResults[q.id])
+    const acc = answered.length > 0 ? Math.round(correct.length / answered.length * 100) : -1
+    return { ...cat, total: catQs.length, answered: answered.length, correct: correct.length, accuracy: acc }
+  })
+  weakData.sort((a, b) => a.accuracy - b.accuracy)
+
+  weakData.forEach(w => {
+    const accDisplay = w.accuracy < 0 ? '暂无数据' : w.accuracy + '%'
+    const barWidth = w.accuracy < 0 ? 0 : w.accuracy
+    const barColor = w.accuracy < 0 ? 'var(--border)' : w.accuracy < 60 ? 'var(--error)' : w.accuracy < 80 ? 'var(--accent)' : 'var(--success)'
+    html += `<div class="weak-item"><span>${w.icon || ''} ${w.name}</span><span>${accDisplay}</span></div>`
+    html += `<div class="weak-bar" style="margin:-2px 0 6px 0"><div class="weak-bar-fill" style="width:${barWidth}%;background:${barColor}"></div></div>`
+  })
+
+  // 15-day study plan
+  html += '<div class="section-title">📅 15天冲刺计划</div>'
+  html += '<table class="plan-table">'
+  const plan = [
+    [1,2,'二十大专题(上)','15KPs + 30题 + 闪卡'],
+    [3,4,'二十大专题(下)','15KPs + 30题 + 闪卡'],
+    [5,5,'河北政策','10KPs + 25题'],
+    [6,7,'2024年时政','20KPs + 40题'],
+    [8,9,'2025年时政','15KPs + 35题'],
+    [10,10,'河北+2026时政','15KPs + 30题'],
+    [11,11,'2026年时政','10KPs + 20题'],
+    [12,13,'综合复习+薄弱','错题重做+薄弱项'],
+    [14,14,'全真模拟','混合100题测验'],
+    [15,15,'考前冲刺','必考回顾+错题复习'],
+  ]
+  plan.forEach(([start, end, topic, activity]) => {
+    const days = start === end ? `第${start}天` : `第${start}-${end}天`
+    html += `<tr><td>${days}</td><td>${topic}</td><td style="color:var(--text-secondary)">${activity}</td></tr>`
+  })
+  html += '</table>'
+
+  // Search
+  html += '<div class="section-title" style="margin-top:16px">🔍 搜索</div>'
+  html += '<input class="search-box" id="searchBox" placeholder="搜索知识点、题目..." oninput="doSearch(this.value)">'
+  html += '<div id="searchResults"></div>'
+
+  // Data management
+  html += '<div class="section-title" style="margin-top:16px">💾 数据管理</div>'
+  html += '<div class="data-mgmt">'
+  html += '<button onclick="exportData()">📤 导出进度</button>'
+  html += '<button onclick="document.getElementById(\'importInput\').click()">📥 导入进度</button>'
+  html += '<input type="file" id="importInput" accept=".json" style="display:none" onchange="importData(event)">'
+  html += '<button class="danger" onclick="resetData()">🗑️ 重置进度</button>'
+  html += '</div>'
+
+  html += '</div>'
+  container.innerHTML = html
+  container.querySelector('.content').classList.add('active')
+}
+
+function doSearch(query) {
+  const el = document.getElementById('searchResults')
+  if (!query || query.length < 1) { el.innerHTML = ''; return }
+  const q = query.toLowerCase()
+
+  let results = []
+  state.data.knowledgePoints.forEach(kp => {
+    if (kp.title.includes(q) || kp.content.includes(q) || (kp.tags || []).some(t => t.includes(q))) {
+      results.push({ type: 'kp', id: kp.id, title: kp.title, cat: getCatName(kp.category) })
+    }
+  })
+  state.data.questions.forEach(qs => {
+    if (qs.question.includes(q) || qs.explanation.includes(q)) {
+      results.push({ type: 'q', id: qs.id, title: qs.question.slice(0, 40), cat: getCatName(qs.category) })
+    }
+  })
+  results = results.slice(0, 20)
+
+  let html = ''
+  results.forEach(r => {
+    html += `<div class="search-result" onclick="${r.type === 'kp' ? `switchTab('study')` : `switchTab('quiz')`}">`
+    html += `<span style="font-size:11px;color:var(--text-secondary)">${r.cat}</span> `
+    html += `${r.type === 'kp' ? '📖' : '✍️'} ${escapeHtml(r.title)}`
+    html += `</div>`
+  })
+  if (results.length === 0 && query.length > 1) html = '<div class="empty-state" style="padding:12px">无匹配结果</div>'
+  el.innerHTML = html
+}
+
+// ===== DATA MANAGEMENT =====
+function exportData() {
+  const blob = new Blob([JSON.stringify(state.progress, null, 2)], { type: 'application/json' })
+  const a = document.createElement('a')
+  a.href = URL.createObjectURL(blob)
+  a.download = `szyf-sz-progress-${new Date().toISOString().slice(0,10)}.json`
+  a.click()
+  showToast('✅ 进度已导出')
+}
+
+function importData(event) {
+  const file = event.target.files[0]
+  if (!file) return
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result)
+      state.progress = { ...state.progress, ...data }
+      Store.set('progress', state.progress)
+      showToast('✅ 进度已导入')
+      switchTab('stats')
+    } catch { showToast('❌ 文件格式错误') }
+  }
+  reader.readAsText(file)
+}
+
+function resetData() {
+  if (confirm('确定重置所有学习进度？此操作不可恢复！')) {
+    state.progress = { learned: {}, quizResults: {}, fcRatings: {}, streak: 0, lastDate: null, totalKps: 0, totalQs: 0, correctQs: 0 }
+    Store.set('progress', state.progress)
+    showToast('✅ 已重置')
+    switchTab('stats')
+  }
+}
+
+// ===== UTILITIES =====
+function shuffleArray(arr) {
+  const a = [...arr]
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]] }
+  return a
+}
+
+function arraysEqual(a, b) {
+  if (a.length !== b.length) return false
+  for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false
+  return true
+}
+
+// ===== TOUCH SWIPE =====
+let touchStartX = 0
+document.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX }, { passive: true })
+document.addEventListener('touchend', e => {
+  const diff = touchStartX - e.changedTouches[0].screenX
+  if (Math.abs(diff) < 60) return
+  if (state.page === 'quiz' && !state.quiz.done) {
+    diff > 0 ? quizNext() : quizPrev()
+  } else if (state.page === 'flashcard') {
+    diff > 0 ? fcNext() : fcPrev()
+  }
+}, { passive: true })
+
+// ===== INIT =====
+init()
+</script>
+</body>
+</html>
